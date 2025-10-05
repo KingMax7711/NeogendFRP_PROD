@@ -21,3 +21,6 @@ logs/
 # Data
 data/
 data/*
+
+# Certificats
+certs/*
