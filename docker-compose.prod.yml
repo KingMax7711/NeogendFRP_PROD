@@ -11,10 +11,10 @@ services:
         ports:
             - "80:80"
             # Activez 443 après émission du certificat et passage à la conf SSL
-            # - "443:443"
+            - "443:443"
         volumes:
             # Par défaut, démarrage en HTTP pour émettre le premier certificat
-            - ./nginx/prod.http.conf:/etc/nginx/conf.d/default.conf:ro
+            - ./nginx/prod.ssl.conf:/etc/nginx/conf.d/default.conf:ro
             - ./data/certbot/www:/var/www/certbot
             - ./data/certbot/conf:/etc/letsencrypt
         networks:
@@ -29,7 +29,7 @@ services:
             - neogend_net
         # Pas de ports exposés en prod, le reverse proxy s'en charge
         healthcheck:
-            test: ["CMD", "wget", "-qO-", "http://localhost/"]
+            test: ["CMD-SHELL", "curl -sf http://localhost/ >/dev/null"]
             interval: 30s
             timeout: 5s
             retries: 5
