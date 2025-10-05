@@ -1,0 +1,23 @@
+# Environment files
+.env
+.env.*
+!*.example
+.env.prod.example
+
+# Node / frontend
+node_modules/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+env/
+
+# Docker
+*.log
+logs/
+
+# Data
+data/
+data/*

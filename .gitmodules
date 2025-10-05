@@ -1,0 +1,6 @@
+[submodule "Neogend_Python_API"]
+	path = Neogend_Python_API
+	url = https://github.com/KingMax7711/Neogend_Python_API.git
+[submodule "Neogend_React_App"]
+	path = Neogend_React_App
+	url = https://github.com/KingMax7711/Neogend_React_App.git
