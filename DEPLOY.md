@@ -1,11 +1,11 @@
 Déploiement en production (VPS + Docker)
 
-Objectif: mettre le site en ligne sur frp-neogend.fr avec HTTPS. On y va pas à pas, très simplement, en suivant les étapes dans l’ordre. Si quelque chose échoue, on revient à l’étape juste avant.
+Objectif: mettre le site en ligne sur neogend-frp.fr avec HTTPS. On y va pas à pas, très simplement, en suivant les étapes dans l’ordre. Si quelque chose échoue, on revient à l’étape juste avant.
 
 ## 0) Pré-requis (à préparer avant)
 
 -   Tu as un serveur (VPS) accessible en SSH (Ubuntu/Debian conseillé)
--   Le domaine frp-neogend.fr pointe vers l’IP du VPS (DNS de type A). Attends la propagation DNS (ça peut prendre 5–30 min)
+-   Le domaine neogend-frp.fr pointe vers l’IP du VPS (DNS de type A). Attends la propagation DNS (ça peut prendre 5–30 min)
 -   Les ports 80 (HTTP) et 443 (HTTPS) sont ouverts sur:
     -   le firewall du fournisseur (OVH/Scaleway/Azure/etc.)
     -   le firewall du VPS (ex: ufw). Exemple pour Ubuntu:
@@ -62,7 +62,7 @@ Dans `.env`, remplis les valeurs importantes:
 
 -   POSTGRES_PASSWORD = un bon mot de passe
 -   SECRET_KEY = une longue chaîne aléatoire (clé JWT)
--   FRONTEND_ORIGINS = https://frp-neogend.fr
+-   FRONTEND_ORIGINS = https://neogend-frp.fr
 -   COOKIE_SECURE = true
 -   COOKIE_SAMESITE = none
 -   (facultatif) DEFAULT*ADMIN*\* si tu veux un admin créé automatiquement si aucun utilisateur n’existe
@@ -73,7 +73,7 @@ Sauvegarde et ferme.
 Astuce: tu peux vérifier rapidement que l’IP publique répond au ping DNS:
 
 ```bash
-ping -c 1 frp-neogend.fr
+ping -c 1 neogend-frp.fr
 ```
 
 ## 3) Démarrer en HTTP (première mise en route)
@@ -94,7 +94,7 @@ docker compose -f docker-compose.prod.yml ps
 docker compose -f docker-compose.prod.yml logs -f reverse-proxy
 ```
 
-Teste dans un navigateur: http://frp-neogend.fr doit afficher ton site (pas encore en HTTPS).
+Teste dans un navigateur: http://neogend-frp.fr doit afficher ton site (pas encore en HTTPS).
 
 ## 4) Émettre le certificat Let’s Encrypt (une seule fois)
 
@@ -107,17 +107,17 @@ docker compose -f docker-compose.prod.yml run --rm certbot_init
 
 # Sinon, passe-les en variables d’env à la volée:
 docker compose -f docker-compose.prod.yml run --rm \
-    -e DOMAIN=frp-neogend.fr \
+    -e DOMAIN=neogend-frp.fr \
     -e CERTBOT_EMAIL=votre@email \
     certbot_init
 ```
 
 Si c’est bon, les certificats sont créés ici sur le VPS:
-`/opt/neogend/data/certbot/conf/live/frp-neogend.fr/`
+`/opt/neogend/data/certbot/conf/live/neogend-frp.fr/`
 
 Si ça échoue:
 
--   Vérifie que frp-neogend.fr pointe bien vers l’IP du VPS
+-   Vérifie que neogend-frp.fr pointe bien vers l’IP du VPS
 -   Vérifie que le port 80 est ouvert
 -   Attends 5–10 minutes et réessaie
 
@@ -161,17 +161,17 @@ Ce service va tenter un `certbot renew` toutes les 12h.
 
 ## 7) Tester que tout est OK
 
--   Visite: http://frp-neogend.fr → doit rediriger vers https
--   Visite: https://frp-neogend.fr → le site doit s’afficher
--   API: https://frp-neogend.fr/api/health → doit renvoyer 200
--   Docs: https://frp-neogend.fr/api/docs → doit s’ouvrir
+-   Visite: http://neogend-frp.fr → doit rediriger vers https
+-   Visite: https://neogend-frp.fr → le site doit s’afficher
+-   API: https://neogend-frp.fr/api/health → doit renvoyer 200
+-   Docs: https://neogend-frp.fr/api/docs → doit s’ouvrir
 
 Tu peux aussi tester en ligne de commande:
 
 ```bash
-curl -I http://frp-neogend.fr
-curl -I https://frp-neogend.fr
-curl -sS https://frp-neogend.fr/api/health
+curl -I http://neogend-frp.fr
+curl -I https://neogend-frp.fr
+curl -sS https://neogend-frp.fr/api/health
 ```
 
 ## 8) Opérations courantes (petit pense-bête)
@@ -227,10 +227,10 @@ cat backup_YYYY-MM-DD.sql | docker compose -f docker-compose.prod.yml exec -T db
 
 -   Swagger (docs) ne charge pas:
 
-    -   Vérifier https://frp-neogend.fr/api/docs et que `API_ROOT_PATH=/api` est bien pris en compte (c’est déjà configuré)
+    -   Vérifier https://neogend-frp.fr/api/docs et que `API_ROOT_PATH=/api` est bien pris en compte (c’est déjà configuré)
 
 -   CORS / Cookies:
-    -   FRONTEND_ORIGINS doit contenir exactement `https://frp-neogend.fr`
+    -   FRONTEND_ORIGINS doit contenir exactement `https://neogend-frp.fr`
     -   Cookies: `COOKIE_SECURE=true` et `COOKIE_SAMESITE=none` (déjà dans `.env.prod`)
 
 ## 10) En résumé (vraiment très simple)
