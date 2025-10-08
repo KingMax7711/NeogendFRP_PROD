@@ -52,9 +52,12 @@ services:
             APP_RELEASE_STATUS: prod
             APP_VERSION: ${APP_VERSION:-1.0.0}
             FRONTEND_ORIGINS: ${FRONTEND_ORIGINS:-https://neogend-frp.fr}
+            APP_LOG_DIR: "/logs"
             # Admin par défaut (créé seulement si aucun user)
             DEFAULT_ADMIN_NIPOL: ${DEFAULT_ADMIN_NIPOL:-123456789}
             DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD:-Admin123!}
+        volumes:
+            - neogend_logs:/logs
         depends_on:
             - db
         networks:
@@ -138,3 +141,4 @@ networks:
 
 volumes:
     postgres_data:
+    neogend_logs:
