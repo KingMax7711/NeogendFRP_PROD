@@ -25,6 +25,8 @@ services:
             context: ./Neogend_React_App
         container_name: neogend_frontend
         restart: unless-stopped
+        environment:
+            VITE_REACT_APP_VERSION: ${APP_VERSION:-1.0.0}
         networks:
             - neogend_net
         # Pas de ports exposés en prod, le reverse proxy s'en charge
