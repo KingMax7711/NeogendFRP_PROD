@@ -224,6 +224,19 @@ cat backup_YYYY-MM-DD.sql | docker compose -f docker-compose.prod.yml exec -T db
 
     -   Le backend n’est pas démarré ou a crash → `docker compose logs -f backend`
     -   Le frontend n’est pas prêt → `docker compose logs -f frontend`
+    -   502 avec Nginx et message `connect() failed (111: Connection refused) while connecting to upstream`:
+        -   Cause fréquente: l’IP du conteneur `frontend`/`backend` a changé après un restart et Nginx pointe encore vers l’ancienne IP (DNS Docker « stale »).
+        -   Correctif: les configs Nginx `nginx/prod.http.conf` et `nginx/prod.ssl.conf` intègrent désormais un resolver Docker (`resolver 127.0.0.11`) et utilisent des variables d’upstream dynamiques. Assurez-vous d’utiliser ces fichiers et redémarrez le reverse proxy:
+
+        ```bash
+        docker compose -f docker-compose.prod.yml up -d reverse-proxy
+        # ou simplement recharger la conf sans couper:
+        docker compose -f docker-compose.prod.yml exec reverse-proxy nginx -s reload
+        ```
+        -   Vérifiez aussi que `frontend` et `backend` sont `healthy`:
+        ```bash
+        docker compose -f docker-compose.prod.yml ps
+        ```
 
 -   Swagger (docs) ne charge pas:
 
